@@ -139,7 +139,7 @@ class TestDetectPRBranch:
 
 
 class TestSharedInstructions:
-    """Test that 'instructions: shared' loads from prompts/shared/."""
+    """Test that 'instructions: shared' loads from references/shared/."""
 
     def test_swe_shared_instructions(self, minimal_config, templates_dir, prompts_dir):
         results = render_config(minimal_config, templates_dir, prompts_dir)

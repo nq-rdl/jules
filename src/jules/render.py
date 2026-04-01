@@ -17,7 +17,7 @@ from jinja2 import Environment, FileSystemLoader
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
-PROMPTS_DIR = ROOT / "prompts"
+PROMPTS_DIR = ROOT / "skill" / "jules-prompt" / "references"
 
 # Map role names to their shared instruction files
 SHARED_INSTRUCTIONS = {
@@ -59,7 +59,7 @@ def load_config(config_path: Path) -> dict:
 
 
 def _load_shared_prompt(name: str, prompts_dir: Path) -> str:
-    """Load a shared prompt block from prompts/shared/."""
+    """Load a shared prompt block from skill/jules-prompt/references/shared/."""
     path = prompts_dir / "shared" / name
     if not path.exists():
         raise FileNotFoundError(f"Shared prompt not found: {path}")

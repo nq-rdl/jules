@@ -57,7 +57,7 @@ available:
 
 ## Shared Prompt Blocks
 
-Reusable blocks live in `prompts/shared/`:
+Reusable blocks live in `skill/jules-prompt/references/shared/`:
 
 | File | Used By | Content |
 |------|---------|---------|
