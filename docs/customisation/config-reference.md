@@ -15,6 +15,7 @@ workflow files for a project.
 | `repo_structure` | string | Yes | — | Directory listing (multiline) |
 | `coding_standards` | string | No | — | Project coding rules (multiline) |
 | `roles` | list | Yes | — | List of agent role definitions |
+| `permissions` | map | No | standard read/write set | Default GitHub Actions job permissions |
 
 ## Role Fields
 
@@ -27,6 +28,8 @@ workflow files for a project.
 | `role_display_name` | string | No | `NAME` | Display name in workflow |
 | `negative_filters` | bool | No | `false` | Add `!contains` guards |
 | `detect_pr_branch` | bool | No | `false` | Detect PR branch |
+| `trigger_scope` | string | No | `all_comments` | `all_comments`, `issues_only`, or `prs_only` |
+| `permissions` | map | No | standard read/write set | Per-role GitHub Actions job permissions |
 | `action_ref` | string | No | top-level | Override action reference |
 | `secret_name` | string | No | top-level | Override secret name |
 | `writing_standards` | string | No | — | `"shared"` or inline |
@@ -79,4 +82,11 @@ roles:
       3. Kubernetes security
       4. Supply chain
     instructions: "shared"
+
+  - name: issue
+    instructions: "shared"
+    trigger_scope: issues_only
+    permissions:
+      contents: read
+      issues: write
 ```

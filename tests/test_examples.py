@@ -60,6 +60,20 @@ class TestDataPlatformExample:
                 )
 
 
+class TestIssueTriageExample:
+    """Render .claude/skills/jules-action/examples/issue-triage.yml and verify output."""
+
+    def test_produces_issue_workflow(self, examples_dir, templates_dir, prompts_dir):
+        results = _render_example("issue-triage", examples_dir, templates_dir, prompts_dir)
+        assert list(results) == ["jules-issue-dispatch.yml"]
+
+    def test_issue_workflow_is_issue_only(self, examples_dir, templates_dir, prompts_dir):
+        results = _render_example("issue-triage", examples_dir, templates_dir, prompts_dir)
+        content = results["jules-issue-dispatch.yml"]
+        assert "github.event.issue.pull_request == null" in content
+        assert "pull-requests:" not in content
+
+
 class TestClaudeCodeExample:
     """Render .claude/skills/jules-action/examples/claude-code.yml and verify output."""
 

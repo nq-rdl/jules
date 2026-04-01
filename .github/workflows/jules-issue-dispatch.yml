@@ -7,14 +7,14 @@ on:
 jobs:
   issue:
     runs-on: ubuntu-latest
-    # Trigger on @jules-issue comments from authorised users only
+    # Trigger on @jules-issue comments from authorised users on issues only
     if: >
       contains(github.event.comment.body, '@jules-issue') &&
+      github.event.issue.pull_request == null &&
       contains(fromJSON('["OWNER", "MEMBER"]'), github.event.comment.author_association)
     permissions:
       contents: read
       issues: write
-      pull-requests: read
     steps:
       - name: Fetch issue context
         id: issue
@@ -87,14 +87,14 @@ jobs:
 
             ${{ github.event.comment.body }}
 
-            You are performing issue triage only for this repository.
+            Perform issue triage only for the issue above.
 
-            Do NOT modify code, create commits, create branches, open or update a pull
+            Do not modify code, create commits, create branches, open or update a pull
             request, or claim that fixes have been implemented. Your deliverable is a
             structured assessment that helps a human decide the next action.
 
             Review the issue against this repository and produce a triage assessment with
-            the following checks:
+            these checks:
 
             1. **Verdict** — classify the issue as one of:
                - Ready for implementation
@@ -103,42 +103,33 @@ jobs:
                - Out of scope for this repository
                - Blocked by dependency or external decision
                - Needs human design or product input
-
             2. **Scope assessment** — explain whether the requested work belongs in this
-               repository. If only part of the issue is in scope, separate the in-repo and
-               out-of-repo concerns.
-
-            3. **Clarity check** — identify missing reproduction details, expected behaviour,
-               acceptance criteria, screenshots, logs, or examples. If the issue is not yet
-               actionable, say exactly what information is missing.
-
+               repository. If only part is in scope, separate the in-repo and out-of-repo
+               concerns.
+            3. **Clarity check** — identify missing reproduction details, expected
+               behaviour, acceptance criteria, screenshots, logs, or examples. If the issue
+               is not yet actionable, say exactly what information is missing.
             4. **Likely code areas** — identify the most likely directories, files,
-               functions, tests, or docs that would be involved. Distinguish clearly
-               between confirmed evidence and likely touch points.
-
+               functions, tests, workflows, or docs that would be involved. Distinguish
+               clearly between confirmed evidence and likely touch points.
             5. **Risk and blast radius** — assess likely risk as low, medium, or high, and
-               note any impact on templates, rendering logic, workflows, docs, tests,
-               security, or user-facing behaviour.
-
+               note any impact on code, workflows, docs, tests, security, or user-facing
+               behaviour.
             6. **Related work and duplication** — call out obvious duplicates, overlaps,
                dependencies, or follow-up work only where the available evidence supports
                it. If you cannot verify duplication from the available context, say so
                explicitly rather than guessing.
-
             7. **Routing recommendation** — recommend the most appropriate next owner and
                trigger:
                - `@jules-swe` for code changes in this repo
                - `@jules-docs` for documentation-only work
                - `@jules-security` for security review or remediation
                - human follow-up when clarification, design, or external coordination is required
-
             8. **Task sizing** — state whether the work looks suitable for a single PR or
                should be split into smaller tasks. If it should be split, suggest the split
                boundaries.
-
             9. **Implementation plan** — if the issue is ready, provide a short, concrete,
                ordered plan covering investigation, implementation, tests, and validation.
-
             10. **Acceptance criteria** — if the issue is ready, propose clear checks that a
                 follow-up implementation should satisfy.
 
@@ -165,7 +156,6 @@ jobs:
 
             Prefer evidence over confidence. If something is uncertain, say so plainly.
             Keep the assessment concise, decision-oriented, and useful to a team lead.
-
 
       - name: React to confirm dispatch
         if: success()

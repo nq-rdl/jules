@@ -2,8 +2,8 @@
 name: jules-actions
 description: >
   Generate customised Jules GitHub Actions dispatch workflows for a repository.
-  Use when setting up Jules SWE, Docs, or Security agent workflows in a new or
-  existing repo. Supports custom agent roles beyond the three standard ones.
+  Use when setting up Jules SWE, Docs, Security, or Issue Triage agent workflows
+  in a new or existing repo. Supports custom agent roles beyond the standard ones.
 ---
 
 You are helping the user set up Jules AI agent dispatch workflows for their repository.
@@ -38,7 +38,22 @@ Ask the user to confirm or provide the following. Pre-fill from `CLAUDE.md` if a
    - **SWE** (Software Engineer) — implements code changes
    - **Docs** (Technical Writer) — documentation tasks
    - **Security** (Security Engineer) — security review
+   - **Issue** (Engineering Triage Lead) — assesses issue scope, risk, and routing
    - **Custom** — user defines the role name, persona, and instructions
+
+For each role, ask whether it should trigger on:
+- all issue comments (`all_comments`)
+- issues only (`issues_only`)
+- PR comments only (`prs_only`)
+
+Also ask whether the role needs custom GitHub Actions job permissions. If not,
+use the template defaults. Issue triage roles usually only need:
+
+```yaml
+permissions:
+  contents: read
+  issues: write
+```
 
 For each custom role, ask:
 - Role name (used as `@jules-{name}` trigger)
@@ -77,6 +92,9 @@ corporate technical writing block.
 For security roles, add `detect_pr_branch: true` and a `security_scope` field listing
 the specific security areas to review.
 
+For issue roles, use `instructions: "shared"`, `trigger_scope: issues_only`, and minimal
+permissions unless the user explicitly wants broader access.
+
 ## Step 4: Generate Workflow Files
 
 Check if the `jules-templates` package is available (`pixi run generate --help`).
@@ -88,6 +106,8 @@ pattern yourself. Each workflow follows this structure:
 
 - Trigger: `on: issue_comment: types: [created]`
 - Job filter: `if: contains(body, '@jules-{role}') && auth_association check`
+- Optional scope guard: `github.event.issue.pull_request == null` for issues only or
+  `github.event.issue.pull_request != null` for PR comments only
 - Steps: Fetch issue context → Invoke Jules → React with rocket emoji
 - The system prompt is embedded inline in the `prompt:` field
 
@@ -105,6 +125,10 @@ After generating, remind the user:
 - The SWE workflow should include negative filters (`!contains`) for ALL other role
   triggers to prevent double-triggering. Do NOT include `!contains('@jules')` — this
   is a known bug that blocks `@jules-swe` since it's a substring match.
+- `issue_comment` fires for both issues and PRs. Use `trigger_scope: issues_only` for
+  issue triage and `prs_only` for PR-only review workflows.
+- Keep permissions least-privilege. Do not grant `pull-requests` access unless the role
+  actually needs it.
 - Security workflows should pin the action to a commit hash, not `@main`.
 - All workflows use `openssl rand -hex 8` for secure output delimiters (not `ISSUE_EOF`).
 - Writing standards block (for docs) uses Australian English and corporate technical tone.

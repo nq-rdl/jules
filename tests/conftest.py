@@ -114,3 +114,44 @@ def custom_role_config() -> dict:
             }
         ],
     }
+
+
+@pytest.fixture()
+def issue_role_config() -> dict:
+    """Config for the built-in issue triage role."""
+    return {
+        "project_name": "Issue Role Project",
+        "project_description": "a project using issue triage",
+        "secret_name": "RJS_JULES_API",
+        "auth_roles": ["OWNER", "MEMBER"],
+        "action_ref": "nq-rdl/jules-action@main",
+        "repo_structure": "- src/    — Source code\n- docs/   — Documentation\n",
+        "coding_standards": "- Python: ruff\n",
+        "roles": [{"name": "issue", "instructions": "shared"}],
+    }
+
+
+@pytest.fixture()
+def scoped_role_config() -> dict:
+    """Config for testing trigger scopes and custom permissions."""
+    return {
+        "project_name": "Scoped Role Project",
+        "project_description": "a project with scoped custom roles",
+        "secret_name": "MY_JULES_KEY",
+        "auth_roles": ["OWNER", "MEMBER"],
+        "action_ref": "nq-rdl/jules-action@main",
+        "repo_structure": "- src/    — Source code\n",
+        "coding_standards": "- Python: ruff\n",
+        "roles": [
+            {
+                "name": "review",
+                "persona": "Reviewer",
+                "trigger_scope": "prs_only",
+                "permissions": {
+                    "contents": "read",
+                    "pull-requests": "write",
+                },
+                "instructions": "Review the pull request above.\n",
+            }
+        ],
+    }

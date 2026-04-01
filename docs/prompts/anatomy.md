@@ -54,6 +54,7 @@ available:
 - **SWE** — Implement the solution, determine task type, follow standards
 - **Docs** — Draft/Review/Cleanup, open a PR
 - **Security** — Assess severity, implement fixes, document findings
+- **Issue** — Triage scope, assess risk, and recommend the next action
 
 ## Shared Prompt Blocks
 
@@ -65,6 +66,7 @@ Reusable blocks live in `.claude/skills/jules-prompt/references/shared/`:
 | `swe-instructions.md` | SWE | Implementation guidance |
 | `docs-instructions.md` | Docs | Draft/Review/Cleanup types |
 | `security-instructions.md` | Security | Severity assessment, remediation |
+| `issue-instructions.md` | Issue | Structured issue triage and routing |
 
 Set `instructions: "shared"` in your config to use these. Override with
 inline `instructions:` for custom behaviour.

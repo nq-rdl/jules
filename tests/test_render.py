@@ -156,6 +156,12 @@ class TestSharedInstructions:
         content = results["jules-security-dispatch.yml"]
         assert "Identify concrete vulnerabilities" in content
 
+    def test_issue_shared_instructions(self, issue_role_config, templates_dir, prompts_dir):
+        results = render_config(issue_role_config, templates_dir, prompts_dir)
+        content = results["jules-issue-dispatch.yml"]
+        assert "Perform issue triage only" in content
+        assert "## Verdict" in content
+
 
 class TestSharedWritingStandards:
     """Test that docs role includes writing standards."""
@@ -183,6 +189,28 @@ class TestSecretName:
         results = render_config(custom_role_config, templates_dir, prompts_dir)
         content = results["jules-test-dispatch.yml"]
         assert "secrets.MY_JULES_KEY" in content
+
+
+class TestTriggerScopeAndPermissions:
+    """Test trigger scope guards and per-role permissions."""
+
+    def test_issue_role_is_limited_to_issues(self, issue_role_config, templates_dir, prompts_dir):
+        results = render_config(issue_role_config, templates_dir, prompts_dir)
+        content = results["jules-issue-dispatch.yml"]
+        assert "github.event.issue.pull_request == null" in content
+        assert "pull-requests:" not in content
+
+    def test_prs_only_scope_is_supported(self, scoped_role_config, templates_dir, prompts_dir):
+        results = render_config(scoped_role_config, templates_dir, prompts_dir)
+        content = results["jules-review-dispatch.yml"]
+        assert "github.event.issue.pull_request != null" in content
+
+    def test_custom_permissions_are_rendered(self, scoped_role_config, templates_dir, prompts_dir):
+        results = render_config(scoped_role_config, templates_dir, prompts_dir)
+        content = results["jules-review-dispatch.yml"]
+        assert "contents: read" in content
+        assert "pull-requests: write" in content
+        assert "issues:" not in content
 
 
 class TestRenderRole:

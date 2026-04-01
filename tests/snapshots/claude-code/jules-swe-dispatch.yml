@@ -7,8 +7,7 @@ on:
 jobs:
   swe:
     runs-on: ubuntu-latest
-    # Trigger on @jules-swe (but NOT @jules-docs or @jules-security) from authorised users.
-    # The negative checks prevent other Jules workflows from double-triggering here.
+    # Trigger on @jules-swe (but NOT @jules-docs or @jules-security) comments from authorised users
     if: >
       contains(github.event.comment.body, '@jules-swe') &&
       !contains(github.event.comment.body, '@jules-docs') &&

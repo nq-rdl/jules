@@ -72,7 +72,7 @@ Templates use non-standard delimiters to avoid collision with GitHub Actions exp
 
 ### Role resolution
 
-Three built-in roles (`swe`, `docs`, `security`) have defaults in `ROLE_DEFAULTS`. Custom roles (any other name) must supply all fields themselves. The `instructions: "shared"` sentinel loads role-specific markdown from `references/shared/{role}-instructions.md`.
+Four built-in roles (`swe`, `docs`, `security`, `issue`) have defaults in `ROLE_DEFAULTS`. Custom roles (any other name) must supply all fields themselves. The `instructions: "shared"` sentinel loads role-specific markdown from `references/shared/{role}-instructions.md`.
 
 ## Writing Standards
 
