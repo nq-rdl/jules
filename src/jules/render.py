@@ -23,6 +23,7 @@ PROMPTS_DIR = ROOT / ".claude" / "skills" / "jules-prompt" / "references"
 # Map role names to their shared instruction files
 SHARED_INSTRUCTIONS = {
     "swe": "swe-instructions.md",
+    "infra": "infra-instructions.md",
     "docs": "docs-instructions.md",
     "security": "security-instructions.md",
     "issue": "issue-instructions.md",
@@ -53,6 +54,13 @@ ROLE_DEFAULTS = {
         "persona": "Technical Writer",
         "title_prefix": "Docs",
         "role_display_name": "Docs",
+        "negative_filters": False,
+        "detect_pr_branch": False,
+    },
+    "infra": {
+        "persona": "Platform Engineer",
+        "title_prefix": "Infra",
+        "role_display_name": "Infra",
         "negative_filters": False,
         "detect_pr_branch": False,
     },

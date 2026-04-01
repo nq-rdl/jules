@@ -1,6 +1,6 @@
 # Custom Roles
 
-Beyond the four built-in roles (SWE, Docs, Security, Issue), you can define
+Beyond the five built-in roles (SWE, Infra, Docs, Security, Issue), you can define
 custom agent roles for any specialisation.
 
 ## Defining a Custom Role
@@ -56,16 +56,12 @@ This generates `jules-test-dispatch.yml` triggered by `@jules-test` comments.
     Open a pull request with your changes when complete.
 ```
 
-### DevOps / Platform Engineer
+## Built-In Infra Role
 
 ```yaml
-- name: platform
-  persona: "Platform Engineer"
-  title_prefix: "Platform"
-  role_display_name: "Platform"
-  detect_pr_branch: true
-  instructions: |
-    Review and implement infrastructure changes for the issue above.
-    Focus on reliability, observability, and cost efficiency.
-    Open a pull request with your changes when complete.
+- name: infra
+  instructions: "shared"
 ```
+
+For infrastructure-as-code work, prefer the built-in `infra` role and the
+`@jules-infra` trigger before creating a custom Platform or DevOps role.

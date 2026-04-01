@@ -17,6 +17,14 @@ coding_standards: |
     namespacing with role prefix, handlers follow restart-then-verify pattern
   - Terraform: single thin bootstrap module, check blocks for smoke tests,
     sensitive values via TF_VAR_* env vars
+  - Platform conventions: use QEMU/libvirt for VM-backed infrastructure,
+    RKE2 for Kubernetes, and cloud-init for guest bootstrap; only introduce
+    NixOS + flakes for MicroVM or container work when the issue explicitly
+    calls for it
+  - Validation: Jules has no direct access to libvirt or Kubernetes; rely on
+    repository-local checks only (`ansible-lint`, `yamllint`, syntax checks,
+    `terraform fmt` / `terraform validate`, Helm lint, pre-commit). Add missing
+    tooling when needed.
   - Python: managed via pixi, build backend is hatchling
 
 roles:
@@ -37,6 +45,12 @@ roles:
       - docs/hypervisor/     — Bare metal: libvirt VMs, cloud-init, RKE2, proxy
       - docs/kubernetes/     — K8s: ArgoCD, networking, TLS, deployment profiles
       - docs/operations/     — Runbooks, inventory, getting started
+    instructions: "shared"
+
+  - name: infra
+    persona: "Platform Engineer"
+    title_prefix: "Infra"
+    role_display_name: "Infra"
     instructions: "shared"
 
   - name: security

@@ -6,8 +6,8 @@ the nq-rdl organisation.
 ## What This Is
 
 Templates and tooling for generating GitHub Actions workflows that dispatch
-Jules (Google's AI coding agent) via issue comments. Supports four built-in
-agent roles (SWE, Docs, Security, Issue Triage) and custom roles.
+Jules (Google's AI coding agent) via issue comments. Supports five built-in
+agent roles (SWE, Infra, Docs, Security, Issue Triage) and custom roles.
 
 ## Quick Start
 
@@ -44,7 +44,8 @@ Skills live under `.claude/skills/`. For compatibility with other tooling,
 2. Run the generator — it renders Jinja2 templates into GitHub Actions workflows
 3. Copy the workflows to your repo's `.github/workflows/`
 4. Add your Jules API key as a repository secret
-5. Trigger agents by commenting `@jules-swe`, `@jules-docs`, `@jules-security`, or `@jules-issue`
+5. Trigger agents by commenting `@jules-swe`, `@jules-infra`, `@jules-docs`,
+   `@jules-security`, or `@jules-issue`
    on issues
 
 ## Config Example
@@ -90,6 +91,7 @@ roles:
 | Template | Trigger | Purpose |
 |----------|---------|---------|
 | `jules-swe-dispatch.yml` | `@jules-swe` | Software engineering tasks |
+| `jules-infra-dispatch.yml` | `@jules-infra` | Platform and infrastructure as code tasks |
 | `jules-docs-dispatch.yml` | `@jules-docs` | Documentation tasks |
 | `jules-security-dispatch.yml` | `@jules-security` | Security review |
 | `jules-issue-dispatch.yml` | `@jules-issue` | Issue triage and routing |
