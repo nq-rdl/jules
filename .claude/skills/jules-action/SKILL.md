@@ -41,6 +41,10 @@ Ask the user to confirm or provide the following. Pre-fill from `CLAUDE.md` if a
    - **Issue** (Engineering Triage Lead) — assesses issue scope, risk, and routing
    - **Custom** — user defines the role name, persona, and instructions
 
+If the user mentions issue triage, backlog review, duplicate detection, scope
+assessment, or "review this issue first", recommend the built-in **Issue** role
+before suggesting a custom role.
+
 For each role, ask whether it should trigger on:
 - all issue comments (`all_comments`)
 - issues only (`issues_only`)
@@ -93,7 +97,8 @@ For security roles, add `detect_pr_branch: true` and a `security_scope` field li
 the specific security areas to review.
 
 For issue roles, use `instructions: "shared"`, `trigger_scope: issues_only`, and minimal
-permissions unless the user explicitly wants broader access.
+permissions unless the user explicitly wants broader access. This should be the
+default recommendation for workflows like `@jules-issue please review and triage`.
 
 ## Step 4: Generate Workflow Files
 
@@ -127,6 +132,9 @@ After generating, remind the user:
   is a known bug that blocks `@jules-swe` since it's a substring match.
 - `issue_comment` fires for both issues and PRs. Use `trigger_scope: issues_only` for
   issue triage and `prs_only` for PR-only review workflows.
+- When the user wants a human-in-the-loop front door for implementation, prefer the
+  built-in `issue` role first, then hand off to `@jules-swe`, `@jules-docs`, or
+  `@jules-security` after triage.
 - Keep permissions least-privilege. Do not grant `pull-requests` access unless the role
   actually needs it.
 - Security workflows should pin the action to a commit hash, not `@main`.
