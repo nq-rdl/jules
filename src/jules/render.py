@@ -8,6 +8,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -17,13 +18,26 @@ from jinja2 import Environment, FileSystemLoader
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
-PROMPTS_DIR = ROOT / "skill" / "jules-prompt" / "references"
+PROMPTS_DIR = ROOT / ".claude" / "skills" / "jules-prompt" / "references"
 
 # Map role names to their shared instruction files
 SHARED_INSTRUCTIONS = {
     "swe": "swe-instructions.md",
     "docs": "docs-instructions.md",
     "security": "security-instructions.md",
+    "issue": "issue-instructions.md",
+}
+
+DEFAULT_PERMISSIONS = {
+    "contents": "read",
+    "issues": "write",
+    "pull-requests": "read",
+}
+
+TRIGGER_SCOPE_CONDITIONS = {
+    "all_comments": None,
+    "issues_only": "github.event.issue.pull_request == null",
+    "prs_only": "github.event.issue.pull_request != null",
 }
 
 # Role defaults when not specified in config
@@ -49,6 +63,18 @@ ROLE_DEFAULTS = {
         "negative_filters": False,
         "detect_pr_branch": True,
     },
+    "issue": {
+        "persona": "Engineering Triage Lead",
+        "title_prefix": "Issue",
+        "role_display_name": "Issue Triage",
+        "negative_filters": False,
+        "detect_pr_branch": False,
+        "trigger_scope": "issues_only",
+        "permissions": {
+            "contents": "read",
+            "issues": "write",
+        },
+    },
 }
 
 
@@ -59,7 +85,7 @@ def load_config(config_path: Path) -> dict:
 
 
 def _load_shared_prompt(name: str, prompts_dir: Path) -> str:
-    """Load a shared prompt block from skill/jules-prompt/references/shared/."""
+    """Load a shared prompt block from .claude/skills/jules-prompt/references/shared/."""
     path = prompts_dir / "shared" / name
     if not path.exists():
         raise FileNotFoundError(f"Shared prompt not found: {path}")
@@ -110,6 +136,50 @@ def _persona_article(persona: str) -> str:
     return "an" if first_word[0:1] in "aeiou" else "a"
 
 
+def _resolve_trigger_scope(role: dict) -> str:
+    """Resolve and validate the comment trigger scope for a role."""
+    scope = role.get("trigger_scope", "all_comments")
+    if scope not in TRIGGER_SCOPE_CONDITIONS:
+        raise ValueError(
+            f"Invalid trigger_scope '{scope}'. "
+            f"Expected one of: {list(TRIGGER_SCOPE_CONDITIONS.keys())}."
+        )
+    return scope
+
+
+def _build_trigger_if(
+    role_name: str,
+    auth_roles: list[str],
+    trigger_scope: str,
+    other_triggers: list[str],
+) -> str:
+    """Build the GitHub Actions if-expression for a role trigger."""
+    conditions = [f"contains(github.event.comment.body, '@jules-{role_name}')"]
+    conditions.extend(
+        f"!contains(github.event.comment.body, '{trigger}')" for trigger in other_triggers
+    )
+    scope_condition = TRIGGER_SCOPE_CONDITIONS[trigger_scope]
+    if scope_condition:
+        conditions.append(scope_condition)
+    conditions.append(
+        f"contains(fromJSON('{json.dumps(auth_roles)}'), github.event.comment.author_association)"
+    )
+    return " &&\n      ".join(conditions)
+
+
+def _describe_trigger(role_name: str, trigger_scope: str, other_triggers: list[str]) -> str:
+    """Return a human-readable description of the trigger behaviour."""
+    description = f"Trigger on @jules-{role_name}"
+    if other_triggers:
+        description += f" (but NOT {' or '.join(other_triggers)})"
+    description += " comments from authorised users"
+    if trigger_scope == "issues_only":
+        description += " on issues only"
+    elif trigger_scope == "prs_only":
+        description += " on PRs only"
+    return description
+
+
 def render_role(
     config: dict,
     role: dict,
@@ -146,6 +216,10 @@ def render_role(
     if merged.get("negative_filters"):
         other_triggers = _compute_other_triggers(config, role_name)
 
+    auth_roles = config.get("auth_roles", ["OWNER", "MEMBER"])
+    trigger_scope = _resolve_trigger_scope(merged)
+    permissions = merged.get("permissions", config.get("permissions", DEFAULT_PERMISSIONS))
+
     context = {
         "role_name": role_name,
         "role_display_name": merged.get("role_display_name", role_name.upper()),
@@ -156,12 +230,12 @@ def render_role(
         "project_description": config.get("project_description", ""),
         "repo_structure": config.get("repo_structure", ""),
         "coding_standards": config.get("coding_standards", ""),
-        "auth_roles": config.get("auth_roles", ["OWNER", "MEMBER"]),
         "secret_name": role.get("secret_name", config.get("secret_name", "JULES_API_KEY")),
         "action_ref": role.get("action_ref", config.get("action_ref", "nq-rdl/jules-action@main")),
         "detect_pr_branch": merged.get("detect_pr_branch", False),
-        "negative_filters": merged.get("negative_filters", False),
-        "other_role_triggers": other_triggers,
+        "trigger_description": _describe_trigger(role_name, trigger_scope, other_triggers),
+        "trigger_if": _build_trigger_if(role_name, auth_roles, trigger_scope, other_triggers),
+        "permissions": permissions,
         "writing_standards": writing_standards,
         "security_scope": role.get("security_scope", ""),
         "docs_structure": role.get("docs_structure", ""),

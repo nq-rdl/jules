@@ -1,0 +1,24 @@
+project_name: "Jules Workflow Templates"
+project_description: "workflow templates repo"
+secret_name: "RJS_JULES_API"
+auth_roles: ["OWNER", "MEMBER"]
+action_ref: "nq-rdl/jules-action@main"
+
+repo_structure: |
+  - templates/              — Universal GitHub Actions Jinja2 template and includes
+  - src/jules/              — Python renderer, validator, and CLI entry point
+  - tests/                  — pytest suite with snapshot tests for rendered workflows
+  - .claude/skills/         — Claude Code skills for generating, prompting, and testing Jules workflows
+  - .github/workflows/      — CI workflows plus generated Jules dispatch workflows for this repo
+  - docs/                   — Zensical documentation site
+
+coding_standards: |
+  - Python 3.11+ managed via pixi with hatchling as the build backend
+  - Ruff for Python linting and formatting; yamllint for YAML; pytest for tests
+  - Use the universal template rather than hand-maintaining duplicated workflow logic
+  - Australian English and direct corporate technical tone in user-facing text
+  - Keep changes targeted and consistent with existing repository conventions
+
+roles:
+  - name: issue
+    instructions: "shared"

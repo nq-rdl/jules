@@ -14,7 +14,7 @@ detailed because there is no interactive back-and-forth once the agent starts.
 ## Reference Examples
 
 This skill includes ready-to-use workflow examples at
-`skill/jules-prompt/references/examples/`. Here is a summary:
+`.claude/skills/jules-prompt/references/examples/`. Here is a summary:
 
 | Example | Trigger | Pattern |
 |---------|---------|---------|
@@ -164,6 +164,10 @@ Add `automation_mode: AUTO_CREATE_PR` for fully autonomous PR creation.
 If the user is building an `issue_comment` dispatch workflow, suggest using the
 `/jules-actions` skill instead — it generates complete workflows from the `.j2`
 templates in this repo.
+
+If the user wants issue triage, duplicate detection, scope assessment, or a
+human-in-the-loop front door before implementation, recommend the built-in
+`issue` role and an `@jules-issue` trigger before suggesting a custom prompt.
 
 For other trigger types, the reference examples are the best starting point.
 The examples can be adapted to use `nq-rdl/jules-action@main` instead of

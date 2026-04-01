@@ -1,0 +1,3 @@
+kind: Changed
+body: Moves `skill/` to `.claude/skills/` — `.agents/skills` now symlinks to the canonical skill directory
+time: 2026-04-01T22:19:15.771215108+10:00

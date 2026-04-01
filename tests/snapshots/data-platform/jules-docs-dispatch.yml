@@ -7,7 +7,7 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
-    # Trigger on @jules-docs comments from authorised users only
+    # Trigger on @jules-docs comments from authorised users
     if: >
       contains(github.event.comment.body, '@jules-docs') &&
       contains(fromJSON('["OWNER", "MEMBER"]'), github.event.comment.author_association)

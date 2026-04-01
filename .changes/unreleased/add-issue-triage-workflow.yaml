@@ -1,0 +1,4 @@
+kind: Added
+body: >-
+  New `@jules-issue` dispatch workflow triages issues — gives teams a
+  structured repo-local assessment

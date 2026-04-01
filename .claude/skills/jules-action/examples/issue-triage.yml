@@ -1,0 +1,18 @@
+project_name: "Example Project"
+project_description: "an application using Jules issue triage"
+secret_name: "JULES_API_KEY"
+auth_roles: ["OWNER", "MEMBER"]
+action_ref: "nq-rdl/jules-action@main"
+
+repo_structure: |
+  - src/           — Application source code
+  - tests/         — Automated test suite
+  - docs/          — Project documentation
+
+coding_standards: |
+  - Python: ruff for linting, pytest for tests
+  - Keep changes targeted and well tested
+
+roles:
+  - name: issue
+    instructions: "shared"

@@ -16,7 +16,7 @@ using the `gh` CLI. This skill covers the full lifecycle: trigger → monitor �
 diagnose → verify.
 
 For a command quick-reference table and common testing patterns, read
-`skill/jules-test/references/quick-reference.md`.
+`.claude/skills/jules-test/references/quick-reference.md`.
 
 ## Before You Start
 

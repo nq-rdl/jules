@@ -35,6 +35,10 @@ roles:
 
 See the [Config Reference](customisation/config-reference.md) for all available options.
 
+Built-in roles include `swe`, `docs`, `security`, and `issue`.
+Use `trigger_scope: issues_only` for issue-only triage workflows and `prs_only`
+for PR-only review workflows.
+
 ## Step 2: Generate Workflows
 
 ```bash

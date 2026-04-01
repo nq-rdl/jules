@@ -17,7 +17,7 @@ def _render_example(name: str, examples_dir: Path, templates_dir: Path, prompts_
 
 
 class TestDataPlatformExample:
-    """Render skill/jules-action/examples/data-platform.yml and verify output."""
+    """Render .claude/skills/jules-action/examples/data-platform.yml and verify output."""
 
     def test_produces_three_workflows(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
@@ -54,13 +54,28 @@ class TestDataPlatformExample:
                 expected = snapshot_file.read_text()
                 assert content == expected, (
                     f"Snapshot mismatch for {filename}. "
-                    f"Run 'pixi run generate skill/jules-action/examples/data-platform.yml "
-                    f"--output-dir tests/snapshots/data-platform/' to update."
+                    "Run 'pixi run generate "
+                    ".claude/skills/jules-action/examples/data-platform.yml "
+                    "--output-dir tests/snapshots/data-platform/' to update."
                 )
 
 
+class TestIssueTriageExample:
+    """Render .claude/skills/jules-action/examples/issue-triage.yml and verify output."""
+
+    def test_produces_issue_workflow(self, examples_dir, templates_dir, prompts_dir):
+        results = _render_example("issue-triage", examples_dir, templates_dir, prompts_dir)
+        assert list(results) == ["jules-issue-dispatch.yml"]
+
+    def test_issue_workflow_is_issue_only(self, examples_dir, templates_dir, prompts_dir):
+        results = _render_example("issue-triage", examples_dir, templates_dir, prompts_dir)
+        content = results["jules-issue-dispatch.yml"]
+        assert "github.event.issue.pull_request == null" in content
+        assert "pull-requests:" not in content
+
+
 class TestClaudeCodeExample:
-    """Render skill/jules-action/examples/claude-code.yml and verify output."""
+    """Render .claude/skills/jules-action/examples/claude-code.yml and verify output."""
 
     def test_produces_three_workflows(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("claude-code", examples_dir, templates_dir, prompts_dir)
@@ -93,6 +108,7 @@ class TestClaudeCodeExample:
                 expected = snapshot_file.read_text()
                 assert content == expected, (
                     f"Snapshot mismatch for {filename}. "
-                    f"Run 'pixi run generate skill/jules-action/examples/claude-code.yml "
-                    f"--output-dir tests/snapshots/claude-code/' to update."
+                    "Run 'pixi run generate "
+                    ".claude/skills/jules-action/examples/claude-code.yml "
+                    "--output-dir tests/snapshots/claude-code/' to update."
                 )

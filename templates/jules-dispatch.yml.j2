@@ -7,25 +7,13 @@ on:
 jobs:
   [= role_name =]:
     runs-on: ubuntu-latest
-[% if negative_filters and other_role_triggers %]
-    # Trigger on @jules-[= role_name =] (but NOT [= other_role_triggers | join(' or ') =]) from authorised users.
-    # The negative checks prevent other Jules workflows from double-triggering here.
+    # [= trigger_description =]
     if: >
-      contains(github.event.comment.body, '@jules-[= role_name =]') &&
-[% for other_trigger in other_role_triggers %]
-      !contains(github.event.comment.body, '[= other_trigger =]') &&
-[% endfor %]
-      contains(fromJSON('[= auth_roles | tojson =]'), github.event.comment.author_association)
-[% else %]
-    # Trigger on @jules-[= role_name =] comments from authorised users only
-    if: >
-      contains(github.event.comment.body, '@jules-[= role_name =]') &&
-      contains(fromJSON('[= auth_roles | tojson =]'), github.event.comment.author_association)
-[% endif %]
+      [= trigger_if =]
     permissions:
-      contents: read
-      issues: write
-      pull-requests: read
+[% for permission_name, permission_value in permissions.items() %]
+      [= permission_name =]: [= permission_value =]
+[% endfor %]
     steps:
 [% include 'includes/fetch-context.yml.j2' %]
 

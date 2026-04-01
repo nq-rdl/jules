@@ -1,2 +1,2 @@
 kind: Changed
-body: "Migrated `prompts/` directory into `skill/jules-prompt/references/` — all prompt material now lives under the skill"
+body: "Migrated `prompts/` directory into `.claude/skills/jules-prompt/references/` — all prompt material now lives under the skill"

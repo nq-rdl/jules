@@ -1,7 +1,7 @@
 # Custom Roles
 
-Beyond the three standard roles (SWE, Docs, Security), you can define custom
-agent roles for any specialisation.
+Beyond the four built-in roles (SWE, Docs, Security, Issue), you can define
+custom agent roles for any specialisation.
 
 ## Defining a Custom Role
 
@@ -33,6 +33,8 @@ This generates `jules-test-dispatch.yml` triggered by `@jules-test` comments.
 | `role_display_name` | No | Display name in workflow (default: uppercase name) |
 | `negative_filters` | No | Add `!contains` guards for other roles (default: false) |
 | `detect_pr_branch` | No | Detect PR branch for review (default: false) |
+| `trigger_scope` | No | `all_comments`, `issues_only`, or `prs_only` |
+| `permissions` | No | Per-role GitHub Actions job permissions |
 | `action_ref` | No | Override action ref for this role |
 | `secret_name` | No | Override secret name for this role |
 | `writing_standards` | No | Include writing standards (`"shared"` or inline) |
