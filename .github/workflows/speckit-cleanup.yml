@@ -1,0 +1,19 @@
+name: Archive Specs
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  archive-specs:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: nq-rdl/speckit-cleanup-action@main
+        with:
+          target-dir: docs/specs
