@@ -1,0 +1,2 @@
+kind: Fixed
+body: "SWE negative-filter bug — `!contains('@jules')` was blocking `@jules-swe` due to substring match"
