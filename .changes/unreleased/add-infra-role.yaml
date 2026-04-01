@@ -1,0 +1,4 @@
+kind: Added
+body: >-
+  Added a built-in `@jules-infra` dispatch role for Platform Engineer
+  infrastructure-as-code workflows with repo-local validation constraints

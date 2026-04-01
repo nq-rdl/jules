@@ -2,8 +2,9 @@
 name: jules-actions
 description: >
   Generate customised Jules GitHub Actions dispatch workflows for a repository.
-  Use when setting up Jules SWE, Docs, Security, or Issue Triage agent workflows
-  in a new or existing repo. Supports custom agent roles beyond the standard ones.
+  Use when setting up Jules SWE, Infra, Docs, Security, or Issue Triage agent
+  workflows in a new or existing repo. Supports custom agent roles beyond the
+  standard ones.
 ---
 
 You are helping the user set up Jules AI agent dispatch workflows for their repository.
@@ -11,7 +12,8 @@ You are helping the user set up Jules AI agent dispatch workflows for their repo
 ## What You Do
 
 Generate GitHub Actions workflow files that allow dispatching Jules via issue comments
-(e.g., `@jules-swe`, `@jules-docs`, `@jules-security`, or custom triggers).
+(e.g., `@jules-swe`, `@jules-infra`, `@jules-docs`, `@jules-security`, or
+custom triggers).
 
 ## Step 1: Detect Context
 
@@ -35,11 +37,16 @@ Ask the user to confirm or provide the following. Pre-fill from `CLAUDE.md` if a
 5. **Secret name** — GitHub secret for Jules API key (default: `JULES_API_KEY`)
 6. **Auth level** — who can trigger: `["OWNER", "MEMBER", "COLLABORATOR"]` or `["OWNER", "MEMBER"]`
 7. **Which agent roles** to generate:
-   - **SWE** (Software Engineer) — implements code changes
-   - **Docs** (Technical Writer) — documentation tasks
-   - **Security** (Security Engineer) — security review
-   - **Issue** (Engineering Triage Lead) — assesses issue scope, risk, and routing
-   - **Custom** — user defines the role name, persona, and instructions
+   - **SWE** (Software Engineer) - implements code changes
+   - **Infra** (Platform Engineer) - infrastructure as code, automation, and repo-local validation
+   - **Docs** (Technical Writer) - documentation tasks
+   - **Security** (Security Engineer) - security review
+   - **Issue** (Engineering Triage Lead) - assesses issue scope, risk, and routing
+   - **Custom** - user defines the role name, persona, and instructions
+
+If the user asks for Terraform, OpenTofu, Ansible, ArgoCD, hypervisor, or
+platform automation work, recommend the built-in **Infra** role before suggesting
+a custom role.
 
 If the user mentions issue triage, backlog review, duplicate detection, scope
 assessment, or "review this issue first", recommend the built-in **Issue** role
@@ -87,11 +94,18 @@ roles:
     persona: "Software Engineer"
     negative_filters: true
     instructions: "shared"
+  - name: infra
+    instructions: "shared"
   # ... more roles
 ```
 
 For docs roles, add `writing_standards: "shared"` to include the standard Australian English
 corporate technical writing block.
+
+For infra roles, use `name: infra`, `persona: "Platform Engineer"`, and
+`instructions: "shared"`. Make sure the repo-level coding standards spell out
+the available validation commands and any constraints such as no direct access
+to live clusters or hypervisors.
 
 For security roles, add `detect_pr_branch: true` and a `security_scope` field listing
 the specific security areas to review.
@@ -133,8 +147,8 @@ After generating, remind the user:
 - `issue_comment` fires for both issues and PRs. Use `trigger_scope: issues_only` for
   issue triage and `prs_only` for PR-only review workflows.
 - When the user wants a human-in-the-loop front door for implementation, prefer the
-  built-in `issue` role first, then hand off to `@jules-swe`, `@jules-docs`, or
-  `@jules-security` after triage.
+  built-in `issue` role first, then hand off to `@jules-swe`, `@jules-infra`,
+  `@jules-docs`, or `@jules-security` after triage.
 - Keep permissions least-privilege. Do not grant `pull-requests` access unless the role
   actually needs it.
 - Security workflows should pin the action to a commit hash, not `@main`.

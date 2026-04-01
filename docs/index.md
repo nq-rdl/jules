@@ -10,7 +10,7 @@ the nq-rdl organisation.
 ## What This Is
 
 Templates and tooling for generating GitHub Actions workflows that dispatch
-Jules (Google's AI coding agent) via issue comments. Supports four built-in
+Jules (Google's AI coding agent) via issue comments. Supports five built-in
 agent roles and custom roles.
 
 ## Quick Start
@@ -42,7 +42,8 @@ agent roles and custom roles.
 2. Run the generator — it renders Jinja2 templates into GitHub Actions workflows
 3. Copy the workflows to your repo's `.github/workflows/`
 4. Add your Jules API key as a repository secret
-5. Trigger agents by commenting `@jules-swe`, `@jules-docs`, `@jules-security`, or `@jules-issue`
+5. Trigger agents by commenting `@jules-swe`, `@jules-infra`, `@jules-docs`,
+   `@jules-security`, or `@jules-issue`
    on issues
 
 ## Built-in Roles
@@ -50,6 +51,7 @@ agent roles and custom roles.
 | Role | Trigger | Purpose |
 |------|---------|---------|
 | SWE | `@jules-swe` | Software engineering — implements code changes |
+| Infra | `@jules-infra` | Platform engineering — infrastructure as code and automation |
 | Docs | `@jules-docs` | Technical writing — documentation tasks |
 | Security | `@jules-security` | Security review — vulnerability assessment |
 | Issue | `@jules-issue` | Issue triage — assess scope, risk, and next action |

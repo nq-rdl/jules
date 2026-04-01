@@ -69,6 +69,10 @@ You are TURBO, a performance optimization agent.
 You are a Software Engineer working on the RDL Data Platform.
 ```
 
+```
+You are a Platform Engineer working on the RDL infrastructure.
+```
+
 ### Layer 2: Context
 
 Provide the information Jules needs. For issue-triggered workflows, this comes
@@ -114,6 +118,15 @@ Set boundaries so Jules doesn't go off-track:
 - Don't sacrifice readability for micro-gains
 - Only create a PR if there's measurable impact
 - Run tests before opening PR
+```
+
+For infrastructure-as-code prompts, add explicit environment limits:
+
+```
+- Jules has no direct access to libvirt, hypervisors, Kubernetes, or ArgoCD
+- Validate with repo-local checks only: ansible-lint, yamllint, syntax checks,
+  Terraform or OpenTofu validation, Helm lint, pre-commit hooks
+- Do not claim end-to-end infra verification
 ```
 
 ### Layer 5: Output Format
@@ -162,8 +175,12 @@ Add `automation_mode: AUTO_CREATE_PR` for fully autonomous PR creation.
 ## Integration with Templates
 
 If the user is building an `issue_comment` dispatch workflow, suggest using the
-`/jules-actions` skill instead — it generates complete workflows from the `.j2`
+`/jules-actions` skill instead - it generates complete workflows from the `.j2`
 templates in this repo.
+
+If the user wants infrastructure-as-code work via issue comments, recommend the
+built-in `infra` role with an `@jules-infra` trigger before suggesting a custom
+prompt.
 
 If the user wants issue triage, duplicate detection, scope assessment, or a
 human-in-the-loop front door before implementation, recommend the built-in

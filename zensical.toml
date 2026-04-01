@@ -49,6 +49,7 @@ nav = [
   { "Getting Started" = "getting-started.md" },
   { "Templates" = [
     { "SWE" = "templates/swe.md" },
+    { "Infra" = "templates/infra.md" },
     { "Docs" = "templates/docs.md" },
     { "Security" = "templates/security.md" },
   ]},

@@ -21,7 +21,7 @@ class TestDataPlatformExample:
 
     def test_produces_three_workflows(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
-        assert len(results) == 3
+        assert len(results) == 4
 
     def test_all_valid_yaml(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
@@ -36,6 +36,12 @@ class TestDataPlatformExample:
     def test_docs_contains_mkdocs_structure(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
         assert "MkDocs Material" in results["jules-docs-dispatch.yml"]
+
+    def test_infra_contains_validation_constraints(self, examples_dir, templates_dir, prompts_dir):
+        results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
+        infra = results["jules-infra-dispatch.yml"]
+        assert "Platform Engineer" in infra
+        assert "does not have direct access to libvirt" in infra
 
     def test_security_uses_pinned_action(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)

@@ -132,6 +132,21 @@ def issue_role_config() -> dict:
 
 
 @pytest.fixture()
+def infra_role_config() -> dict:
+    """Config for the built-in infra role."""
+    return {
+        "project_name": "Infra Role Project",
+        "project_description": "an infrastructure as code repository",
+        "secret_name": "JULES_API_KEY",
+        "auth_roles": ["OWNER", "MEMBER"],
+        "action_ref": "nq-rdl/jules-action@main",
+        "repo_structure": "- ansible/   - Host automation\n- terraform/ - Cluster bootstrap\n",
+        "coding_standards": "- Validate with ansible-lint and yamllint\n",
+        "roles": [{"name": "infra", "instructions": "shared"}],
+    }
+
+
+@pytest.fixture()
 def scoped_role_config() -> dict:
     """Config for testing trigger scopes and custom permissions."""
     return {

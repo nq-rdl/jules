@@ -151,6 +151,12 @@ class TestSharedInstructions:
         content = results["jules-docs-dispatch.yml"]
         assert "Determine the documentation task type" in content
 
+    def test_infra_shared_instructions(self, infra_role_config, templates_dir, prompts_dir):
+        results = render_config(infra_role_config, templates_dir, prompts_dir)
+        content = results["jules-infra-dispatch.yml"]
+        assert "Implement the appropriate infrastructure-as-code solution" in content
+        assert "does not have direct access to libvirt" in content
+
     def test_security_shared_instructions(self, multi_role_config, templates_dir, prompts_dir):
         results = render_config(multi_role_config, templates_dir, prompts_dir)
         content = results["jules-security-dispatch.yml"]

@@ -62,6 +62,12 @@ roles:
     negative_filters: true
     instructions: "shared"
 
+  - name: infra
+    persona: "Platform Engineer"
+    title_prefix: "Infra"
+    role_display_name: "Infra"
+    instructions: "shared"
+
   - name: docs
     persona: "Technical Writer"
     writing_standards: "shared"
