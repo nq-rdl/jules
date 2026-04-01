@@ -259,7 +259,7 @@ packages:
 - pypi: ./
   name: jules-templates
   version: 0.1.0
-  sha256: 03de0352556b716c88f6c8323468fed86a40850169fa94018fec2f15e9555060
+  sha256: 0bda86f045f745a51dd0cffcab182d348437abdda432d15234f51c62b659bf00
   requires_dist:
   - jinja2
   - pyyaml
