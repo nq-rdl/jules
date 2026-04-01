@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.8
+      - run: pixi run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.8
+      - run: pixi run test
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.8
+      - name: Render and validate example configs
+        run: |
+          for config in examples/*.yml; do
+            echo "=== Rendering $config ==="
+            pixi run generate "$config" --output-dir /tmp/rendered/
+          done
+          for workflow in /tmp/rendered/*.yml; do
+            echo "=== Validating $workflow ==="
+            pixi run validate "$workflow"
+          done
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.8
+      - run: pixi run docs-build

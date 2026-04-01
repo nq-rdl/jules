@@ -1,0 +1,32 @@
+      - name: Fetch issue context
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$REPO" \
+            --json title,body,labels \
+            --jq '{title, body, labels: [.labels[].name]}' > /tmp/issue.json
+
+          ISSUE_TITLE=$(jq -r '.title' /tmp/issue.json)
+          ISSUE_BODY=$(jq -r '.body // "No description provided."' /tmp/issue.json)
+          ISSUE_LABELS=$(jq -r '.labels | join(", ")' /tmp/issue.json)
+
+          # Use random delimiters to prevent injection via crafted issue content
+          DELIM=$(openssl rand -hex 8)
+
+          {
+            echo "title<<$DELIM"
+            echo "$ISSUE_TITLE"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "body<<$DELIM"
+            echo "$ISSUE_BODY"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "labels=$ISSUE_LABELS" >> "$GITHUB_OUTPUT"

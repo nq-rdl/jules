@@ -1,0 +1,87 @@
+name: Jules [= role_display_name =] Dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  [= role_name =]:
+    runs-on: ubuntu-latest
+[% if negative_filters and other_role_triggers %]
+    # Trigger on @jules-[= role_name =] (but NOT [= other_role_triggers | join(' or ') =]) from authorised users.
+    # The negative checks prevent other Jules workflows from double-triggering here.
+    if: >
+      contains(github.event.comment.body, '@jules-[= role_name =]') &&
+[% for other_trigger in other_role_triggers %]
+      !contains(github.event.comment.body, '[= other_trigger =]') &&
+[% endfor %]
+      contains(fromJSON('[= auth_roles | tojson =]'), github.event.comment.author_association)
+[% else %]
+    # Trigger on @jules-[= role_name =] comments from authorised users only
+    if: >
+      contains(github.event.comment.body, '@jules-[= role_name =]') &&
+      contains(fromJSON('[= auth_roles | tojson =]'), github.event.comment.author_association)
+[% endif %]
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+[% include 'includes/fetch-context.yml.j2' %]
+
+[% if detect_pr_branch %]
+[% include 'includes/detect-branch.yml.j2' %]
+
+[% endif %]
+      - name: Invoke Jules — [= role_display_name =]
+        uses: [= action_ref =]
+        with:
+          jules_api_key: ${{ secrets.[= secret_name =] }}
+[% if detect_pr_branch %]
+          starting_branch: ${{ steps.branch.outputs.name }}
+[% endif %]
+          include_commit_log: true
+          require_plan_approval: false
+          title: "[= title_prefix =]: ${{ steps.issue.outputs.title }}"
+          prompt: |
+            You are [= persona_article =] [= persona =] working on [= project_name =][% if project_description %] — [= project_description =][% endif %].
+[% if writing_standards %]
+
+            [= writing_standards | indent(12) =]
+[% endif %]
+
+            ## [% if role_name == 'security' %]Scope of review[% else %]Architecture context[% endif %]
+
+            [= repo_structure | indent(12) =]
+[% if coding_standards %]
+
+            ## Coding standards
+
+            [= coding_standards | indent(12) =]
+[% endif %]
+[% if security_scope %]
+
+            ## Security areas to assess
+
+            [= security_scope | indent(12) =]
+[% endif %]
+[% if docs_structure %]
+
+            ## Documentation layout
+
+            [= docs_structure | indent(12) =]
+[% endif %]
+
+            ## GitHub Issue #${{ github.event.issue.number }}: ${{ steps.issue.outputs.title }}
+
+            Labels: ${{ steps.issue.outputs.labels }}
+
+            ${{ steps.issue.outputs.body }}
+
+            ## Triggering comment
+
+            ${{ github.event.comment.body }}
+
+            [= instructions | indent(12) =]
+
+[% include 'includes/react-confirm.yml.j2' %]

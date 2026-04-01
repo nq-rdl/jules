@@ -1,0 +1,140 @@
+name: Jules Docs Dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    # Trigger on @jules-docs comments from authorised users only
+    if: >
+      contains(github.event.comment.body, '@jules-docs') &&
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Fetch issue context
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$REPO" \
+            --json title,body,labels \
+            --jq '{title, body, labels: [.labels[].name]}' > /tmp/issue.json
+
+          ISSUE_TITLE=$(jq -r '.title' /tmp/issue.json)
+          ISSUE_BODY=$(jq -r '.body // "No description provided."' /tmp/issue.json)
+          ISSUE_LABELS=$(jq -r '.labels | join(", ")' /tmp/issue.json)
+
+          # Use random delimiters to prevent injection via crafted issue content
+          DELIM=$(openssl rand -hex 8)
+
+          {
+            echo "title<<$DELIM"
+            echo "$ISSUE_TITLE"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "body<<$DELIM"
+            echo "$ISSUE_BODY"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "labels=$ISSUE_LABELS" >> "$GITHUB_OUTPUT"
+
+      - name: Invoke Jules — Docs
+        uses: nq-rdl/jules-action@main
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          include_commit_log: true
+          require_plan_approval: false
+          title: "Docs: ${{ steps.issue.outputs.title }}"
+          prompt: |
+            You are a Technical Writer working on RDL Data Platform — an Infrastructure as Code monorepo that provisions a data platform from bare metal through to Kubernetes services.
+
+            Language: Australian English (favour, colour, organisation, licence (noun), license (verb)).
+
+            Tone: Corporate technical — direct, professional, no marketing language.
+            Write for engineers who will maintain this project. Assume competence.
+
+            Rules:
+            - Be succinct. Say it once, say it clearly, move on.
+            - No flowery language, no filler, no adverbs like "simply", "easily", "just".
+            - No exclamation marks. No emoji. No rhetorical questions.
+            - Prefer active voice. Prefer short sentences.
+            - Lead with what the reader needs to do, not background.
+            - Use consistent heading hierarchy (H2 for sections, H3 for subsections).
+            - Code blocks must specify language (```yaml, ```bash, etc.).
+            - File paths and commands in backticks.
+            - Tables for structured reference data. Prose for procedures.
+            - One blank line between sections. No trailing whitespace.
+
+            ## Architecture context
+            - ansible/       — Hypervisor layer: RHEL VMs via libvirt, RKE2 cluster bootstrap
+            - terraform/     — Thin bootstrap module: Vault auth, ArgoCD registration, smoke tests
+            - argocd/        — App-of-apps: all platform services managed by ArgoCD sync waves
+            - src/da/        — Python package (hatchling, editable via pixi)
+
+
+            ## Coding standards
+
+            - Ansible: FQCN always (ansible.builtin.dnf not dnf), lean roles, variable
+              namespacing with role prefix, handlers follow restart-then-verify pattern
+            - Terraform: single thin bootstrap module, check blocks for smoke tests,
+              sensitive values via TF_VAR_* env vars
+            - Python: managed via pixi, build backend is hatchling
+
+
+            ## Documentation layout
+
+            Documentation lives in `docs/` and is built with MkDocs Material.
+            Navigation is defined in `mkdocs.yml`.
+
+            Docs layout:
+            - docs/architecture/   — System design, data flows, integration patterns
+            - docs/hypervisor/     — Bare metal: libvirt VMs, cloud-init, RKE2, proxy
+            - docs/kubernetes/     — K8s: ArgoCD, networking, TLS, deployment profiles
+            - docs/operations/     — Runbooks, inventory, getting started
+
+
+            ## GitHub Issue #${{ github.event.issue.number }}: ${{ steps.issue.outputs.title }}
+
+            Labels: ${{ steps.issue.outputs.labels }}
+
+            ${{ steps.issue.outputs.body }}
+
+            ## Triggering comment
+
+            ${{ github.event.comment.body }}
+
+            Determine the documentation task type and act accordingly:
+
+            **Draft** — Write new documentation. Read the relevant code to ensure
+            accuracy. Cross-reference existing docs to avoid duplication.
+
+            **Review** — Audit existing docs for accuracy against current code. Fix
+            stale references, incorrect commands, outdated configuration values.
+            Flag sections where code and docs have diverged.
+
+            **Cleanup** — Fix spelling (Australian English), tone (remove informal
+            language), structure (consistent headings, proper code blocks), and
+            formatting. Remove redundant content. Tighten prose.
+
+            Open a pull request with your changes when complete.
+
+      - name: React to confirm dispatch
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api "repos/$REPO/issues/comments/$COMMENT_ID/reactions" \
+            -X POST -f content='rocket'

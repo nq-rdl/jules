@@ -1,0 +1,29 @@
+# Default values for template variables.
+# Per-project configs override these.
+
+secret_name: "JULES_API_KEY"
+auth_roles: ["OWNER", "MEMBER", "COLLABORATOR"]
+action_ref: "nq-rdl/jules-action@main"
+
+# Role defaults
+roles:
+  swe:
+    persona: "Software Engineer"
+    title_prefix: "SWE"
+    role_display_name: "SWE"
+    negative_filters: true
+    detect_pr_branch: false
+
+  docs:
+    persona: "Technical Writer"
+    title_prefix: "Docs"
+    role_display_name: "Docs"
+    negative_filters: false
+    detect_pr_branch: false
+
+  security:
+    persona: "Security Engineer"
+    title_prefix: "Security"
+    role_display_name: "Security Review"
+    negative_filters: false
+    detect_pr_branch: true

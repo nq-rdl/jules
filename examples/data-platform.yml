@@ -1,0 +1,58 @@
+project_name: "RDL Data Platform"
+project_description: >-
+  an Infrastructure as Code monorepo that provisions a data
+  platform from bare metal through to Kubernetes services
+secret_name: "JULES_API_KEY"
+auth_roles: ["OWNER", "MEMBER", "COLLABORATOR"]
+action_ref: "nq-rdl/jules-action@main"
+
+repo_structure: |
+  - ansible/       — Hypervisor layer: RHEL VMs via libvirt, RKE2 cluster bootstrap
+  - terraform/     — Thin bootstrap module: Vault auth, ArgoCD registration, smoke tests
+  - argocd/        — App-of-apps: all platform services managed by ArgoCD sync waves
+  - src/da/        — Python package (hatchling, editable via pixi)
+
+coding_standards: |
+  - Ansible: FQCN always (ansible.builtin.dnf not dnf), lean roles, variable
+    namespacing with role prefix, handlers follow restart-then-verify pattern
+  - Terraform: single thin bootstrap module, check blocks for smoke tests,
+    sensitive values via TF_VAR_* env vars
+  - Python: managed via pixi, build backend is hatchling
+
+roles:
+  - name: swe
+    persona: "Software Engineer"
+    negative_filters: true
+    instructions: "shared"
+
+  - name: docs
+    persona: "Technical Writer"
+    writing_standards: "shared"
+    docs_structure: |
+      Documentation lives in `docs/` and is built with MkDocs Material.
+      Navigation is defined in `mkdocs.yml`.
+
+      Docs layout:
+      - docs/architecture/   — System design, data flows, integration patterns
+      - docs/hypervisor/     — Bare metal: libvirt VMs, cloud-init, RKE2, proxy
+      - docs/kubernetes/     — K8s: ArgoCD, networking, TLS, deployment profiles
+      - docs/operations/     — Runbooks, inventory, getting started
+    instructions: "shared"
+
+  - name: security
+    persona: "Security Engineer"
+    detect_pr_branch: true
+    action_ref: "nq-rdl/jules-action@d8ed19ed75a6c2a35fd4e06e5b2ca7cd68b27046"
+    security_scope: |
+      1. **Secrets and credentials** — hardcoded secrets, plaintext passwords, unencrypted
+         vault strings, overly broad IAM/RBAC permissions, exposed API keys in vars or templates
+      2. **IaC misconfigurations** — insecure defaults in Ansible roles (world-readable files,
+         weak SSH config, disabled SELinux/firewalld), Terraform resources with public exposure,
+         missing encryption at rest or in transit
+      3. **Kubernetes security** — privileged containers, missing Pod Security Standards,
+         overly permissive NetworkPolicies, ServiceAccount token automounting, insecure Helm values
+      4. **Supply chain** — pinned vs floating action/image versions, unverified external sources
+         in requirements.yml, container image provenance
+      5. **Proxy and network** — corporate proxy handling (proxy_url), TLS certificate validation,
+         RKE2 TLS SANs, exposed service endpoints
+    instructions: "shared"

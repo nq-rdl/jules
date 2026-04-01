@@ -1,0 +1,11 @@
+      - name: Detect PR branch
+        id: branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # PR comments arrive as issue_comment events — check if it's a PR
+          BRANCH=$(gh pr view "$ISSUE_NUMBER" --repo "$REPO" \
+            --json headRefName --jq '.headRefName' 2>/dev/null || echo "main")
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
