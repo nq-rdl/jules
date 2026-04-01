@@ -20,7 +20,7 @@ agent roles and custom roles.
     ```bash
     git clone https://github.com/nq-rdl/jules.git
     cd jules && pixi install
-    pixi run generate skill/jules-action/examples/data-platform.yml --output-dir /path/to/repo/.github/workflows/
+    pixi run generate .claude/skills/jules-action/examples/data-platform.yml --output-dir /path/to/repo/.github/workflows/
     ```
 
 === "Copier"

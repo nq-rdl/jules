@@ -8,8 +8,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
-PROMPTS_DIR = ROOT / "skill" / "jules-prompt" / "references"
-EXAMPLES_DIR = ROOT / "skill" / "jules-action" / "examples"
+PROMPTS_DIR = ROOT / ".claude" / "skills" / "jules-prompt" / "references"
+EXAMPLES_DIR = ROOT / ".claude" / "skills" / "jules-action" / "examples"
 SNAPSHOTS_DIR = Path(__file__).resolve().parent / "snapshots"
 
 

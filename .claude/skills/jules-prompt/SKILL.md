@@ -14,7 +14,7 @@ detailed because there is no interactive back-and-forth once the agent starts.
 ## Reference Examples
 
 This skill includes ready-to-use workflow examples at
-`skill/jules-prompt/references/examples/`. Here is a summary:
+`.claude/skills/jules-prompt/references/examples/`. Here is a summary:
 
 | Example | Trigger | Pattern |
 |---------|---------|---------|

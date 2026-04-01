@@ -39,7 +39,7 @@ default = { features = ["dev"], solve-group = "default" }
 generate = "python -m jules.render"
 validate = "python -m jules.render --validate"
 test = "pytest tests/ -v"
-lint = "ruff check src/ tests/ && yamllint templates/ skill/"
+lint = "ruff check src/ tests/ && yamllint templates/ .claude/skills/"
 format = "ruff format src/ tests/"
 docs = "zensical serve"
 docs-build = "zensical build"
