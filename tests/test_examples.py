@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from jules_templates.render import load_config, render_config
+from jules.render import load_config, render_config
 
 
 def _render_example(name: str, examples_dir: Path, templates_dir: Path, prompts_dir: Path):
@@ -17,7 +17,7 @@ def _render_example(name: str, examples_dir: Path, templates_dir: Path, prompts_
 
 
 class TestDataPlatformExample:
-    """Render examples/data-platform.yml and verify output."""
+    """Render skill/jules-action/examples/data-platform.yml and verify output."""
 
     def test_produces_three_workflows(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("data-platform", examples_dir, templates_dir, prompts_dir)
@@ -54,13 +54,13 @@ class TestDataPlatformExample:
                 expected = snapshot_file.read_text()
                 assert content == expected, (
                     f"Snapshot mismatch for {filename}. "
-                    f"Run 'pixi run generate examples/data-platform.yml "
+                    f"Run 'pixi run generate skill/jules-action/examples/data-platform.yml "
                     f"--output-dir tests/snapshots/data-platform/' to update."
                 )
 
 
 class TestClaudeCodeExample:
-    """Render examples/claude-code.yml and verify output."""
+    """Render skill/jules-action/examples/claude-code.yml and verify output."""
 
     def test_produces_three_workflows(self, examples_dir, templates_dir, prompts_dir):
         results = _render_example("claude-code", examples_dir, templates_dir, prompts_dir)
@@ -93,6 +93,6 @@ class TestClaudeCodeExample:
                 expected = snapshot_file.read_text()
                 assert content == expected, (
                     f"Snapshot mismatch for {filename}. "
-                    f"Run 'pixi run generate examples/claude-code.yml "
+                    f"Run 'pixi run generate skill/jules-action/examples/claude-code.yml "
                     f"--output-dir tests/snapshots/claude-code/' to update."
                 )

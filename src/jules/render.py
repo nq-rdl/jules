@@ -1,8 +1,8 @@
 """Jinja2 renderer for Jules dispatch workflow templates.
 
 Usage:
-    python -m jules_templates.render <config.yml> [--output-dir <dir>]
-    python -m jules_templates.render --validate <workflow.yml>
+    python -m jules.render <config.yml> [--output-dir <dir>]
+    python -m jules.render --validate <workflow.yml>
 """
 
 from __future__ import annotations

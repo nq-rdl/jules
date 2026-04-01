@@ -6,7 +6,7 @@ import re
 
 import yaml
 
-from jules_templates.render import render_config
+from jules.render import render_config
 
 JINJA2_PATTERN = re.compile(r"\{\{.*?\}\}|\{%.*?%\}")
 # GitHub Actions expressions are allowed — only flag Jinja2 syntax

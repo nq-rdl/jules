@@ -28,7 +28,7 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.8.8
       - name: Render and validate example configs
         run: |
-          for config in examples/*.yml; do
+          for config in skill/jules-action/examples/*.yml; do
             echo "=== Rendering $config ==="
             pixi run generate "$config" --output-dir /tmp/rendered/
           done

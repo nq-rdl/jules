@@ -12,7 +12,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jules_templates"]
+packages = ["src/jules"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
@@ -36,10 +36,10 @@ pre-commit = "*"
 default = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
-generate = "python -m jules_templates.render"
-validate = "python -m jules_templates.render --validate"
+generate = "python -m jules.render"
+validate = "python -m jules.render --validate"
 test = "pytest tests/ -v"
-lint = "ruff check src/ tests/ && yamllint templates/ examples/"
+lint = "ruff check src/ tests/ && yamllint templates/ skill/"
 format = "ruff format src/ tests/"
 docs = "zensical serve"
 docs-build = "zensical build"

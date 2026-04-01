@@ -9,7 +9,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
 PROMPTS_DIR = ROOT / "prompts"
-EXAMPLES_DIR = ROOT / "examples"
+EXAMPLES_DIR = ROOT / "skill" / "jules-action" / "examples"
 SNAPSHOTS_DIR = Path(__file__).resolve().parent / "snapshots"
 
 

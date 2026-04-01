@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import yaml
 
-from jules_templates.render import render_config, render_role
+from jules.render import render_config, render_role
 
 
 class TestRenderSingleRole:

@@ -19,11 +19,11 @@ templates/              — Jinja2 workflow templates (.yml.j2) and includes
 templates/includes/     — Shared Jinja2 template fragments (fetch context, reaction, branch detection)
 prompts/                — Reference system prompts (markdown)
 prompts/shared/         — Shared prompt blocks (writing standards, instruction footers)
-examples/               — Example per-project config YAML files
-src/jules_templates/    — Python renderer and CLI
+src/jules/              — Python renderer and CLI
 tests/                  — pytest tests with snapshot testing
 tests/snapshots/        — Golden files for snapshot comparison
-skill/                  — Claude Code skill definition
+skill/jules-action/     — /jules-actions skill + example config YAML files
+skill/jules-prompt/     — /jules-prompt skill + reference workflow examples
 docs/                   — Zensical documentation site
 .github/workflows/      — CI for this repo
 ```

@@ -19,7 +19,7 @@ git clone https://github.com/nq-rdl/jules.git
 cd jules && pixi install
 
 # Generate workflows from a config file
-pixi run generate examples/data-platform.yml --output-dir /path/to/repo/.github/workflows/
+pixi run generate skill/jules-action/examples/data-platform.yml --output-dir /path/to/repo/.github/workflows/
 ```
 
 ### Option 2: Use Copier (no clone needed)
