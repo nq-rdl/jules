@@ -1,0 +1,56 @@
+_min_copier_version: "9.0.0"
+
+_templates_suffix: .j2
+
+_subdirectory: templates
+
+_answers_file: .jules-config.yml
+
+# Questions
+project_name:
+  type: str
+  help: "Project name (e.g., 'RDL Data Platform')"
+
+project_description:
+  type: str
+  help: "One-line project description (e.g., 'an IaC monorepo for bare metal to K8s')"
+
+secret_name:
+  type: str
+  default: "JULES_API_KEY"
+  help: "GitHub secret name for the Jules API key"
+
+auth_level:
+  type: str
+  default: "org_members"
+  choices:
+    org_members: '["OWNER", "MEMBER"]'
+    org_and_collaborators: '["OWNER", "MEMBER", "COLLABORATOR"]'
+  help: "Who can trigger Jules via issue comments?"
+
+generate_swe:
+  type: bool
+  default: true
+  help: "Generate SWE (Software Engineering) workflow?"
+
+generate_docs:
+  type: bool
+  default: true
+  help: "Generate Docs (Technical Writer) workflow?"
+
+generate_security:
+  type: bool
+  default: true
+  help: "Generate Security Review workflow?"
+
+repo_structure:
+  type: str
+  default: "- src/    — Source code\n- tests/  — Tests\n- docs/   — Documentation\n"
+  help: "Repository structure (one directory per line, '- dir/ — description' format)"
+  multiline: true
+
+coding_standards:
+  type: str
+  default: "- Follow project conventions\n"
+  help: "Coding standards for the SWE agent"
+  multiline: true

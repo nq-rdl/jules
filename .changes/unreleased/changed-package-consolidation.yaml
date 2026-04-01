@@ -1,0 +1,2 @@
+kind: Changed
+body: "Consolidated `src/jules_templates/` to `src/jules/` for cleaner package naming"

@@ -1,0 +1,2 @@
+kind: Added
+body: Sandboxed devcontainer with iptables firewall for isolated agent testing

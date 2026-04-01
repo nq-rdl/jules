@@ -1,0 +1,2 @@
+kind: Added
+body: Jinja2 workflow templates with custom delimiters for generating Jules dispatch workflows (SWE, Docs, Security, and custom agent roles)

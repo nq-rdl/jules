@@ -1,0 +1,2 @@
+kind: Added
+body: "Snapshot testing suite (43 tests) with golden files for `data-platform` and `claude-code` example configs"

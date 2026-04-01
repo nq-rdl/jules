@@ -1,0 +1,2 @@
+kind: Added
+body: Python renderer CLI — `pixi run generate` renders per-project config YAML into complete workflows, `pixi run validate` checks for leftover placeholders

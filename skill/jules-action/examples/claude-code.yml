@@ -1,0 +1,57 @@
+project_name: "RDL Claude Code plugin marketplace"
+project_description: >-
+  an internal platform that distributes domain-bundled plugins
+  (hooks, agents, skills) for Claude Code
+secret_name: "R_JULES_TOKEN"
+auth_roles: ["OWNER", "MEMBER"]
+action_ref: "nq-rdl/jules-action@main"
+
+repo_structure: |
+  - plugins/rdl-skills/     — Source of truth: all canonical skill files
+  - plugins/rdl-*/          — Bundle plugins (symlink to rdl-skills)
+  - plugins/rdl-hooks/      — Safety guardrails and workflow hooks
+  - src/rdl_cc/             — Python CLI (pixi + hatchling)
+  - .github/workflows/      — CI: validate, bump-version, release
+  - .claude-plugin/         — Marketplace root manifest
+
+coding_standards: |
+  - Python: managed via pixi, build backend is hatchling, ruff for linting
+  - Skills: SKILL.md with frontmatter (name, description, triggers)
+  - Plugins: plugin.json manifest, skills as symlinks to rdl-skills
+  - Hooks: hooks.json for auto-activate, separate .json for opt-in
+  - Conventional commits, changie for changelog entries
+
+roles:
+  - name: swe
+    persona: "Software Engineer"
+    negative_filters: true
+    instructions: "shared"
+
+  - name: docs
+    persona: "Technical Writer"
+    writing_standards: "shared"
+    docs_structure: |
+      - plugins/rdl-skills/skills/  — Canonical skill definitions (SKILL.md)
+      - plugins/rdl-*/              — Bundle plugins with plugin.json manifests
+      - plugins/rdl-hooks/          — Safety hooks (hooks.json, scripts/)
+      - src/rdl_cc/                 — Python CLI source
+      - README.md                   — User-facing documentation
+      - CONTRIBUTING.md             — Contributor guide
+      - CLAUDE.md                   — Agent context file
+    instructions: "shared"
+
+  - name: security
+    persona: "Security Engineer"
+    detect_pr_branch: true
+    action_ref: "nq-rdl/jules-action@d8ed19ed75a6c2a35fd4e06e5b2ca7cd68b27046"
+    security_scope: |
+      This is a PUBLIC org repo. Plugins execute arbitrary code in users'
+      Claude Code sessions. Security is critical.
+
+      1. **Hook bypass** — Can hooks be circumvented? Are safety guardrails enforced?
+      2. **Plugin trust** — Are plugin manifests valid? Do symlinks resolve correctly?
+      3. **CLI safety** — Does rdl-cc validate input? Could it inject into settings.json?
+      4. **Supply chain** — Pinned dependencies? Verified actions versions?
+      5. **Secrets exposure** — Any hardcoded tokens, keys, or credentials?
+      6. **Skill injection** — Could a malicious skill definition execute unintended code?
+    instructions: "shared"

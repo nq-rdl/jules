@@ -1,0 +1,2 @@
+kind: Changed
+body: "Migrated `prompts/` directory into `skill/jules-prompt/references/` — all prompt material now lives under the skill"

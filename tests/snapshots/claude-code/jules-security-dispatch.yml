@@ -1,0 +1,131 @@
+name: Jules Security Review Dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    # Trigger on @jules-security comments from authorised users only
+    if: >
+      contains(github.event.comment.body, '@jules-security') &&
+      contains(fromJSON('["OWNER", "MEMBER"]'), github.event.comment.author_association)
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Fetch issue context
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$REPO" \
+            --json title,body,labels \
+            --jq '{title, body, labels: [.labels[].name]}' > /tmp/issue.json
+
+          ISSUE_TITLE=$(jq -r '.title' /tmp/issue.json)
+          ISSUE_BODY=$(jq -r '.body // "No description provided."' /tmp/issue.json)
+          ISSUE_LABELS=$(jq -r '.labels | join(", ")' /tmp/issue.json)
+
+          # Use random delimiters to prevent injection via crafted issue content
+          DELIM=$(openssl rand -hex 8)
+
+          {
+            echo "title<<$DELIM"
+            echo "$ISSUE_TITLE"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "body<<$DELIM"
+            echo "$ISSUE_BODY"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "labels=$ISSUE_LABELS" >> "$GITHUB_OUTPUT"
+
+      - name: Detect PR branch
+        id: branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # PR comments arrive as issue_comment events — check if it's a PR
+          BRANCH=$(gh pr view "$ISSUE_NUMBER" --repo "$REPO" \
+            --json headRefName --jq '.headRefName' 2>/dev/null || echo "main")
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Invoke Jules — Security Review
+        uses: nq-rdl/jules-action@d8ed19ed75a6c2a35fd4e06e5b2ca7cd68b27046
+        with:
+          jules_api_key: ${{ secrets.R_JULES_TOKEN }}
+          starting_branch: ${{ steps.branch.outputs.name }}
+          include_commit_log: true
+          require_plan_approval: false
+          title: "Security: ${{ steps.issue.outputs.title }}"
+          prompt: |
+            You are a Security Engineer working on RDL Claude Code plugin marketplace — an internal platform that distributes domain-bundled plugins (hooks, agents, skills) for Claude Code.
+
+            ## Scope of review
+            - plugins/rdl-skills/     — Source of truth: all canonical skill files
+            - plugins/rdl-*/          — Bundle plugins (symlink to rdl-skills)
+            - plugins/rdl-hooks/      — Safety guardrails and workflow hooks
+            - src/rdl_cc/             — Python CLI (pixi + hatchling)
+            - .github/workflows/      — CI: validate, bump-version, release
+            - .claude-plugin/         — Marketplace root manifest
+
+
+            ## Coding standards
+
+            - Python: managed via pixi, build backend is hatchling, ruff for linting
+            - Skills: SKILL.md with frontmatter (name, description, triggers)
+            - Plugins: plugin.json manifest, skills as symlinks to rdl-skills
+            - Hooks: hooks.json for auto-activate, separate .json for opt-in
+            - Conventional commits, changie for changelog entries
+
+
+            ## Security areas to assess
+
+            This is a PUBLIC org repo. Plugins execute arbitrary code in users'
+            Claude Code sessions. Security is critical.
+
+            1. **Hook bypass** — Can hooks be circumvented? Are safety guardrails enforced?
+            2. **Plugin trust** — Are plugin manifests valid? Do symlinks resolve correctly?
+            3. **CLI safety** — Does rdl-cc validate input? Could it inject into settings.json?
+            4. **Supply chain** — Pinned dependencies? Verified actions versions?
+            5. **Secrets exposure** — Any hardcoded tokens, keys, or credentials?
+            6. **Skill injection** — Could a malicious skill definition execute unintended code?
+
+
+            ## GitHub Issue #${{ github.event.issue.number }}: ${{ steps.issue.outputs.title }}
+
+            Labels: ${{ steps.issue.outputs.labels }}
+
+            ${{ steps.issue.outputs.body }}
+
+            ## Triggering comment
+
+            ${{ github.event.comment.body }}
+
+            Identify concrete vulnerabilities or misconfigurations related to the issue above,
+            assess their severity (Critical / High / Medium / Low), and implement fixes where possible.
+            Where a fix requires broader architectural change, document the finding clearly
+            with remediation guidance and open the PR with what can be safely automated.
+
+            Follow secure-by-default principles: fail closed, least privilege, no secrets in logs.
+
+      - name: React to confirm dispatch
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api "repos/$REPO/issues/comments/$COMMENT_ID/reactions" \
+            -X POST -f content='rocket'
