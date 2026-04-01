@@ -2,7 +2,7 @@
 # Per-project configs override these.
 
 secret_name: "JULES_API_KEY"
-auth_roles: ["OWNER", "MEMBER", "COLLABORATOR"]
+auth_roles: ["OWNER", "MEMBER"]
 action_ref: "nq-rdl/jules-action@main"
 
 # Role defaults

@@ -3,7 +3,7 @@ project_description: >-
   an Infrastructure as Code monorepo that provisions a data
   platform from bare metal through to Kubernetes services
 secret_name: "JULES_API_KEY"
-auth_roles: ["OWNER", "MEMBER", "COLLABORATOR"]
+auth_roles: ["OWNER", "MEMBER"]
 action_ref: "nq-rdl/jules-action@main"
 
 repo_structure: |

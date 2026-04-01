@@ -10,7 +10,7 @@ jobs:
     # Trigger on @jules-security comments from authorised users only
     if: >
       contains(github.event.comment.body, '@jules-security') &&
-      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+      contains(fromJSON('["OWNER", "MEMBER"]'), github.event.comment.author_association)
     permissions:
       contents: read
       issues: write

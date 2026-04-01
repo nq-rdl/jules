@@ -156,7 +156,7 @@ def render_role(
         "project_description": config.get("project_description", ""),
         "repo_structure": config.get("repo_structure", ""),
         "coding_standards": config.get("coding_standards", ""),
-        "auth_roles": config.get("auth_roles", ["OWNER", "MEMBER", "COLLABORATOR"]),
+        "auth_roles": config.get("auth_roles", ["OWNER", "MEMBER"]),
         "secret_name": role.get("secret_name", config.get("secret_name", "JULES_API_KEY")),
         "action_ref": role.get("action_ref", config.get("action_ref", "nq-rdl/jules-action@main")),
         "detect_pr_branch": merged.get("detect_pr_branch", False),

@@ -1,5 +1,5 @@
 [project]
-authors = [{name = "Rudolf J", email = "r.schnetler@uq.edu.au"}]
+authors = [{name = "RDL", email = "tsv-datalab@health.qld.gov.au"}]
 dependencies = ["jinja2", "pyyaml", "zensical>=0.0.30,<0.0.31"]
 name = "jules-templates"
 description = "Jules AI agent dispatch workflow templates and generator"
