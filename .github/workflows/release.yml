@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-tag:
+    name: Verify release tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag points to a commit on the default branch
+        env:
+          SHA: ${{ github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch origin "$DEFAULT_BRANCH" --depth=1
+          if ! git merge-base --is-ancestor "$SHA" "origin/$DEFAULT_BRANCH"; then
+            echo "Release tags must point to commits already on $DEFAULT_BRANCH"
+            exit 1
+          fi
+
+      - name: Verify release notes exist
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          notes=".changes/${version}.md"
+          if [ ! -f "$notes" ]; then
+            echo "Expected changie release notes at $notes"
+            exit 1
+          fi
+
+  publish:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+    needs:
+      - verify-tag
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Copy changie release notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          notes=".changes/${version}.md"
+          if [ ! -f "$notes" ]; then
+            echo "Expected changie release notes at $notes"
+            exit 1
+          fi
+          cp "$notes" release-notes.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release-notes.md
