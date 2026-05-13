@@ -1,0 +1,2 @@
+kind: Fixed
+body: "ci-failure-fix example skips runs whose head commit was authored by Jules, preventing an auto-fix loop"
