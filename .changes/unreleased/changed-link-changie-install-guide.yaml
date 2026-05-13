@@ -1,0 +1,2 @@
+kind: Changed
+body: "CONTRIBUTING.md now links to the official changie installation guide instead of suggesting `go install`"

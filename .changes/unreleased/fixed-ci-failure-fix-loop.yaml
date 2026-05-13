@@ -1,0 +1,2 @@
+kind: Fixed
+body: "ci-failure-fix example skips runs Jules itself triggered (actor.login check), preventing an auto-fix loop"
