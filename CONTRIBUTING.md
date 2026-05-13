@@ -13,11 +13,7 @@ See `README.md` for repository-specific setup, tooling, and local development co
 
 ## Changie workflow
 
-Install `changie` locally using your preferred method. For example, if you already have Go installed:
-
-```bash
-go install github.com/miniscruff/changie@latest
-```
+Install `changie` locally — see the [official installation guide](https://changie.dev/guide/installation) for all available methods.
 
 Add one unreleased fragment per logical change:
 
