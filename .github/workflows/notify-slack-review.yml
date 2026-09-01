@@ -3,6 +3,7 @@ name: Notify Slack on review request
 on:
   pull_request:
     types: [review_requested]
+permissions: {}
 
 jobs:
   notify:
